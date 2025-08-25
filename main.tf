@@ -3,7 +3,7 @@ resource "random_id" "default" {
 }
 
 provider "google" {
-  project     = var.project_id
+  project = var.project_id
 }
 
 resource "google_artifact_registry_repository" "company_repo" {
@@ -16,7 +16,7 @@ resource "google_artifact_registry_repository" "company_repo" {
     id     = "delete-old"
     action = "DELETE"
     condition {
-        older_than   = "432000s"
+      older_than = "432000s"
     }
   }
 
@@ -24,7 +24,7 @@ resource "google_artifact_registry_repository" "company_repo" {
     id     = "keep-minimum-versions"
     action = "KEEP"
     most_recent_versions {
-        keep_count  = 3
+      keep_count = 3
     }
   }
 }
