@@ -1,6 +1,9 @@
+resource "random_id" "default" {
+  byte_length = 8
+}
+
 provider "google" {
   project     = var.project_id
-  credentials = file("C:\\Users\\Taras\\taras-laba-dev-10f8f54482c7.json")
 }
 
 resource "google_artifact_registry_repository" "company_repo" {

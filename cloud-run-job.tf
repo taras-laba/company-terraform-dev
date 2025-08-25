@@ -31,6 +31,14 @@ resource "google_cloud_run_v2_job" "company_ingestion_job" {
           name  = "PubSub__CarrierRegistrationDataTopicName"
           value = google_pubsub_topic.carrier_registration_updates_topic.name
         }
+        env {
+          name  = "FmcsaArchive__ForceImportWhenAlreadyProcessed"
+          value = "true"
+        }
+        env {
+          name  = "FmcsaArchive__MaxRecordsToProcess"
+          value = "100"
+        }
       }
       volumes {
         name = "gcs-volume"
