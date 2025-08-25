@@ -37,7 +37,7 @@ resource "google_cloud_run_v2_job" "company_ingestion_job" {
         }
         env {
           name  = "FmcsaArchive__MaxRecordsToProcess"
-          value = "100"
+          value = "1000"
         }
       }
       volumes {
