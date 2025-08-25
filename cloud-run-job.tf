@@ -37,7 +37,7 @@ resource "google_cloud_run_v2_job" "company_ingestion_job" {
         }
         env {
           name  = "FmcsaArchive__MaxRecordsToProcess"
-          value = "1000"
+          value = "10"
         }
       }
       volumes {
@@ -51,21 +51,21 @@ resource "google_cloud_run_v2_job" "company_ingestion_job" {
   }
 }
 
-#resource "google_cloud_scheduler_job" "cloud_run_job_scheduler" {
-#  region = var.region
-#  name        = "ingestion-job-scheduler"
-#  description = "Schedules execution of my Cloud Run Job"
-#  schedule    = "0 12 * * *" # Example: Runs daily at 12:00 PM UTC
-#  time_zone   = "America/New_York" # Specify the desired timezone
+resource "google_cloud_scheduler_job" "cloud_run_job_scheduler" {
+  region = var.region
+  name        = "ingestion-job-scheduler"
+  description = "Schedules execution of my Cloud Run Job"
+  schedule    = "0 12 * * *" # Runs daily at 12:00 PM UTC
+  time_zone   = "America/New_York" # Specify the desired timezone
 
-#  http_target {
-#    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${google_cloud_run_v2_job.company_ingestion_job.name}:run"
-#    http_method = "POST"
-#    oauth_token {
-#      service_account_email = google_service_account.cloud_run_invoker.email
-#    }
-#  }
-#}
+  http_target {
+    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${google_cloud_run_v2_job.company_ingestion_job.name}:run"
+    http_method = "POST"
+    oauth_token {
+      service_account_email = google_service_account.cloud_run_invoker.email
+    }
+  }
+}
 
 resource "google_service_account" "cloud_run_invoker" {
   account_id   = "cloud-run-invoker"
