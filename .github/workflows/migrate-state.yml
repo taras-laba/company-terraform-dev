@@ -1,0 +1,31 @@
+name: 'Migrate State to Google'
+
+on:
+  workflow_dispatch: 
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_DEV: taras-laba-dev
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # migrate state
+    - name: Terraform State Migrate
+      run: echo "yes" | terraform init -migrate-state
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
