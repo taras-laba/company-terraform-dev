@@ -1,0 +1,24 @@
+name: Delete lock File
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+env:
+  REGION: us-central1
+  PROJECT_DEV: amplifyfreight-dev
+
+jobs:
+  delete-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key_file: ${{ secrets.GOOGLE_CREDENTIALS }}
+          project_id: ${{ env.PROJECT_DEV }}
+
+      - name: Delete file from GCS
+        run: gsutil rm gs://c62fd21c67c5d91f-terraform-remote-backend/default.tflock
