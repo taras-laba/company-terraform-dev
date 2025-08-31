@@ -33,6 +33,6 @@ jobs:
 
     # unlock state
     - name: Terraform Unlock
-      run: terraform force-unlock ${{ inputs.lockId }}
+      run: echo 'yes' | terraform force-unlock ${{ inputs.lockId }}
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
