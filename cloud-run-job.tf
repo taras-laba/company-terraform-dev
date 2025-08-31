@@ -55,7 +55,7 @@ resource "google_cloud_scheduler_job" "cloud_run_job_scheduler" {
   region      = var.region
   name        = "ingestion-job-scheduler"
   description = "Schedules execution of my Cloud Run Job"
-  schedule    = "0 12 * * *"       # Runs daily at 12:00 PM UTC
+  schedule    = "0 11 * * *"       # Runs daily at 11:00 PM UTC
   time_zone   = "America/New_York" # Specify the desired timezone
 
   http_target {
