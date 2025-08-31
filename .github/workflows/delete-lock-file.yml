@@ -14,10 +14,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+      
       - name: Authenticate to Google Cloud
         uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key_file: ${{ secrets.GOOGLE_CREDENTIALS }}
           project_id: ${{ env.PROJECT_DEV }}
 
       - name: Delete file from GCS
