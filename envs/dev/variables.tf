@@ -10,3 +10,9 @@ variable "region" {
   default     = "us-central1"
 }
 
+variable "location" {
+  description = "The GCP location for resources"
+  type        = string
+  default     = "us-central1"
+}
+
