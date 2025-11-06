@@ -121,3 +121,10 @@ resource "google_cloud_scheduler_job" "scheduler" {
     }
   }
 }
+
+resource "google_project_iam_member" "job_runner_firestore_access" {
+  count   = var.hasAccessToFirestore ? 1 : 0
+  project = var.project_id
+  role    = "roles/datastore.user"
+  member  = "serviceAccount:${google_service_account.job_runner_account.email}"
+}

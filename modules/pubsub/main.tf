@@ -1,4 +1,6 @@
-data "google_project" "current" {}
+data "google_project" "current" {
+  project_id = var.project_id
+}
 
 # Main topic
 resource "google_pubsub_topic" "main" {
@@ -9,7 +11,7 @@ resource "google_pubsub_topic" "main" {
 # Create subscriptions for each endpoint
 resource "google_pubsub_subscription" "subscriptions" {
   for_each = var.endpoints
-  
+
   name    = "${var.topic_name}-${each.key}-subscription"
   topic   = google_pubsub_topic.main.name
   project = var.project_id
@@ -68,7 +70,7 @@ resource "google_pubsub_topic" "dlq" {
     for name, config in var.endpoints : name => config
     if config.enable_dlq
   }
-  
+
   name    = "${var.topic_name}-${each.key}-dlq"
   project = var.project_id
 }
@@ -79,7 +81,7 @@ resource "google_pubsub_subscription" "dlq" {
     for name, config in var.endpoints : name => config
     if config.enable_dlq
   }
-  
+
   name    = "${var.topic_name}-${each.key}-dlq-subscription"
   topic   = google_pubsub_topic.dlq[each.key].name
   project = var.project_id
@@ -93,9 +95,26 @@ resource "google_service_account" "push_auth" {
     for name, config in var.endpoints : name => config
     if config.enable_authentication && config.service_account_email == ""
   }
-  
+
   # Cuts the topic name and/or key depending on the length, due to 30 chars limitation for account_id
   account_id   = "${substr(var.topic_name, 0, 27 - min(length(each.key), 13) - 1)}-${substr(each.key, 0, 13)}-sa"
   display_name = "Pub/Sub Push Authentication for ${var.topic_name}-${each.key}"
   project      = var.project_id
+}
+
+// IAM bindings for Pub/Sub service account to publish unacknowledged messages to DLQ topics
+resource "google_pubsub_topic_iam_member" "dead_letter_publisher_binding" {
+  for_each = google_pubsub_topic.dlq
+  topic    = each.value.name
+  role     = "roles/pubsub.publisher"
+  member   = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+}
+
+// IAM bindings for Pub/Sub service account to acknowledge forwarded undeliverable messages
+resource "google_pubsub_subscription_iam_member" "topic_subscriber_binding" {
+  for_each = google_pubsub_subscription.subscriptions
+
+  subscription = each.value.name
+  role         = "roles/pubsub.subscriber"
+  member       = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
 }

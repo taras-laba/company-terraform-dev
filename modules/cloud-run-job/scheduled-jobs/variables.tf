@@ -67,3 +67,9 @@ variable "secretIds" {
   type        = list(string)
   default     = []
 }
+
+variable "hasAccessToFirestore" {
+  description = "Indicates if the job needs access to Firestore"
+  type        = bool
+  default     = false
+}

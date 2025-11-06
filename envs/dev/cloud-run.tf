@@ -9,7 +9,6 @@ module "company_ing_consumer_module_cloud_run" {
     GCP__ProjectId            = var.project_id,
     Authentication__Audience  = "company-ingestion-consumer",
     Authentication__Authority = "https://accounts.google.com",
-    Foo                       = "Bar",
     ASPNETCORE_ENVIRONMENT    = "Development",
   }
   cpu                     = "1"
@@ -29,10 +28,15 @@ module "company_sync_worker_module_cloud_run" {
     Authentication__Audience  = "company-sync-worker",
     Authentication__Authority = "https://accounts.google.com",
     ASPNETCORE_ENVIRONMENT    = "Development",
+    SecretManager__SecretIds  = "FmcsaApi__WebKey"
+    RateLimiting__IsEnabled   = "true",
+    RateLimiting__QueueLimit  = "50"
   }
-  cpu    = "1"
-  memory = "512Mi"
-  #subscriptions_sa_emails = [module.carrier_registration_updates_pubsub.service_accounts["message"]]
+  cpu                     = "1"
+  memory                  = "512Mi"
+  max_instance_count      = 1
+  subscriptions_sa_emails = [module.carrier_sync_pubsub.service_accounts["message"]]
+  secretIds               = [module.fmcsa_api_webkey_secret.secret_id]
 }
 
 module "company_api_module_cloud_run" {

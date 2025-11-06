@@ -37,10 +37,15 @@ resource "google_project_iam_member" "firestore_access" {
   member  = "serviceAccount:${google_service_account.company_api_sa.email}"
 }
 
+resource "google_service_account" "company_api_invoker_sa" {
+  account_id   = "company-api-invoker-sa"
+  display_name = "Service Account to invoke Company API in Cloud Run"
+}
+
 resource "google_cloud_run_service_iam_binding" "company_api_cloud_run_service_public" {
   service  = google_cloud_run_v2_service.company_api_cloud_run.name
   role     = "roles/run.invoker"
   project  = var.project_id
   location = var.location
-  members  = ["allUsers"]
+  members  = ["allUsers", "serviceAccount:${google_service_account.company_api_invoker_sa.email}"]
 }

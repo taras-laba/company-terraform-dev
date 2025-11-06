@@ -5,6 +5,10 @@ resource "google_cloud_run_v2_service" "company_sync_worker_module_cloud_run" {
   ingress             = "INGRESS_TRAFFIC_ALL"
   custom_audiences    = ["company-sync-worker"]
 
+  scaling {
+    max_instance_count = var.max_instance_count
+  }
+
   template {
     service_account = google_service_account.company_sync_worker_sa.email
 

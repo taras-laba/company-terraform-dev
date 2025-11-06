@@ -47,3 +47,9 @@ variable "secretIds" {
   type        = list(string)
   default     = []
 }
+
+variable "max_instance_count" {
+  description = "Maximum number of instances for the Cloud Run service"
+  type        = number
+  default     = 10
+}
