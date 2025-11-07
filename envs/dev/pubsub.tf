@@ -22,6 +22,7 @@ module "carrier_sync_pubsub" {
     message = {
       push_endpoint = "${module.company_sync_worker_module_cloud_run.service_url}/api/carrier-sync"
       audience      = "company-sync-worker"
+      is_fifo       = true
     }
   }
 }
