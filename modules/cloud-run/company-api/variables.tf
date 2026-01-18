@@ -35,3 +35,15 @@ variable "memory" {
   type        = string
   default     = "512Mi"
 }
+
+variable "read_secret_ids" {
+  description = "List of Secret Manager secrets the service account can read"
+  type        = list(string)
+  default     = []
+}
+
+variable "write_secret_ids" {
+  description = "List of Secret Manager secrets the service account can write to"
+  type        = list(string)
+  default     = []
+}

@@ -83,6 +83,14 @@ resource "google_pubsub_topic_iam_member" "job_runner_pubsub_publisher_bindings"
   member = "serviceAccount:${google_service_account.job_runner_account.email}"
 }
 
+resource "google_pubsub_subscription_iam_member" "job_runner_pubsub_subscriber_bindings" {
+  for_each = toset(var.subscription_names)
+
+  subscription = each.value
+  role         = "roles/pubsub.subscriber"
+  member       = "serviceAccount:${google_service_account.job_runner_account.email}"
+}
+
 resource "google_secret_manager_secret_iam_member" "secret_access" {
   for_each  = toset(var.secretIds)
   secret_id = each.value

@@ -8,11 +8,17 @@ resource "google_pubsub_topic" "main" {
   project = var.project_id
 }
 
+locals {
+  subscription_names_map = {
+    for k, v in var.endpoints : k => "${var.topic_name}-${k}-subscription"
+  }
+}
+
 # Create subscriptions for each endpoint
 resource "google_pubsub_subscription" "subscriptions" {
   for_each = var.endpoints
 
-  name    = "${var.topic_name}-${each.key}-subscription"
+  name    = local.subscription_names_map[each.key]
   topic   = google_pubsub_topic.main.name
   project = var.project_id
 

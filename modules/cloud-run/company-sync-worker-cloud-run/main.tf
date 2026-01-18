@@ -2,16 +2,16 @@ resource "google_cloud_run_v2_service" "company_sync_worker_module_cloud_run" {
   name                = var.app_name
   location            = var.location
   deletion_protection = false
-  ingress             = "INGRESS_TRAFFIC_ALL"
-  custom_audiences    = ["company-sync-worker"]
+  ingress             = "INGRESS_TRAFFIC_INTERNAL_ONLY"
 
   scaling {
-    max_instance_count = var.max_instance_count
+    scaling_mode          = "MANUAL"
+    manual_instance_count = var.enabled ? 1 : 0
   }
 
   template {
     service_account = google_service_account.company_sync_worker_sa.email
-
+        
     containers {
       image = var.image
       startup_probe {
@@ -52,18 +52,14 @@ resource "google_project_iam_member" "firestore_access" {
   member  = "serviceAccount:${google_service_account.company_sync_worker_sa.email}"
 }
 
-resource "google_cloud_run_service_iam_binding" "company_sync_worker_module_cloud_run_pubsub_invoker" {
-  for_each = toset(var.subscriptions_sa_emails)
-
-  service  = google_cloud_run_v2_service.company_sync_worker_module_cloud_run.name
-  role     = "roles/run.invoker"
-  project  = var.project_id
-  location = var.location
-  members  = ["serviceAccount:${each.value}"]
+resource "google_pubsub_subscription_iam_member" "subscriber_binding" {
+  subscription = "projects/${var.project_id}/subscriptions/${var.subscription_name}"
+  role         = "roles/pubsub.subscriber"
+  member       = "serviceAccount:${google_service_account.company_sync_worker_sa.email}"
 }
 
 resource "google_secret_manager_secret_iam_member" "secret_access" {
-  for_each  = toset(var.secretIds)
+  for_each  = toset(var.secret_ids)
   secret_id = each.value
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.company_sync_worker_sa.email}"

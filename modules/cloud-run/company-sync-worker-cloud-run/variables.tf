@@ -36,20 +36,19 @@ variable "memory" {
   default     = "512Mi"
 }
 
-variable "subscriptions_sa_emails" {
-  description = "The service account email to be used by the pub/sub subscription to push messages to Cloud Run"
-  type        = list(string)
-  default     = []
-}
-
-variable "secretIds" {
+variable "secret_ids" {
   description = "List of Secret Manager secret IDs to be made accessible to the Cloud Run service"
   type        = list(string)
   default     = []
 }
 
-variable "max_instance_count" {
-  description = "Maximum number of instances for the Cloud Run service"
-  type        = number
-  default     = 10
+variable "subscription_name" {
+  description = "Name of the subscription"
+  type        = string
+}
+
+variable "enabled" {
+  description = "Whether to enable the Cloud Run service"
+  type        = bool
+  default     = true
 }

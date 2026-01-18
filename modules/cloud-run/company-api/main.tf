@@ -49,3 +49,32 @@ resource "google_cloud_run_service_iam_binding" "company_api_cloud_run_service_p
   location = var.location
   members  = ["allUsers", "serviceAccount:${google_service_account.company_api_invoker_sa.email}"]
 }
+
+resource "google_secret_manager_secret_iam_member" "secret_access" {
+  for_each  = toset(var.read_secret_ids)
+  secret_id = each.value
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.company_api_sa.email}"
+
+  depends_on = [google_service_account.company_api_sa]
+}
+
+resource "google_secret_manager_secret_iam_member" "secret_viewer" {
+  for_each = toset(var.read_secret_ids)
+
+  secret_id = each.value
+  role      = "roles/secretmanager.viewer"
+  member    = "serviceAccount:${google_service_account.company_api_sa.email}"
+
+  depends_on = [google_service_account.company_api_sa]
+}
+
+resource "google_secret_manager_secret_iam_member" "secret_version_adder" {
+  for_each = toset(var.write_secret_ids)
+
+  secret_id = each.value
+  role      = "roles/secretmanager.secretVersionAdder"
+  member    = "serviceAccount:${google_service_account.company_api_sa.email}"
+
+  depends_on = [google_service_account.company_api_sa]
+}

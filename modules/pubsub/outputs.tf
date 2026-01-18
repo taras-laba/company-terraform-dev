@@ -16,3 +16,8 @@ output "service_accounts" {
   description = "Map of push subscription names to service account emails"
   value       = { for k, v in google_service_account.push_auth : k => v.email }
 }
+
+output "subscription_names" {
+  description = "Map of endpoint names to subscription names"
+  value       = local.subscription_names_map
+}

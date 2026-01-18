@@ -57,7 +57,13 @@ variable "gcs_volumes" {
 }
 
 variable "pubsub_topic_names" {
-  description = "List of topic names to give access to"
+  description = "List of topic names to give access for publishing to"
+  type        = list(string)
+  default     = []
+}
+
+variable "subscription_names" {
+  description = "List of subscription names to give access for pulling from"
   type        = list(string)
   default     = []
 }

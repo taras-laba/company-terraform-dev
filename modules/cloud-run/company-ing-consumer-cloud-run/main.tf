@@ -49,11 +49,9 @@ resource "google_project_iam_member" "firestore_access" {
 }
 
 resource "google_cloud_run_service_iam_binding" "company_ing_consumer_module_cloud_run_pubsub_invoker" {
-  for_each = toset(var.subscriptions_sa_emails)
-
   service  = google_cloud_run_v2_service.company_ing_consumer_module_cloud_run.name
   role     = "roles/run.invoker"
   project  = var.project_id
   location = var.location
-  members  = ["serviceAccount:${each.value}"]
+  members  = [for email in var.subscriptions_sa_emails : "serviceAccount:${email}"]
 }
