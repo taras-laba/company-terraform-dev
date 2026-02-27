@@ -26,8 +26,13 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
-    # migrate state
-    - name: Terraform State Migrate
-      run: terraform force-unlock ${{ inputs.lockId }}
+    - name: Terraform Init
+      run: terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
+
+    # unlock state
+    - name: Terraform Unlock
+      run: terraform force-unlock --force ${{ inputs.lockId }}
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
