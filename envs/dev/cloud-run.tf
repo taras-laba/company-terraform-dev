@@ -15,7 +15,8 @@ module "company_ing_consumer_module_cloud_run" {
   memory                  = "512Mi"
   subscriptions_sa_emails = [
     module.carrier_registration_updates_pubsub.service_accounts["message"],
-    module.carrier_data_updates_pubsub.service_accounts["message"]
+    module.carrier_data_updates_pubsub.service_accounts["message"],
+    "company-updates-message-sa@amplifyfreight-dev.iam.gserviceaccount.com"
   ]
 }
 
